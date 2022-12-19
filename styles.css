@@ -5,18 +5,36 @@ body {
     padding: 0;
   }
   
-  h1 {
-    font-size: 36px;
-    text-align: center;
-    color: #333;
-    margin: 20px 0;
-  }
+h1 {
+  font-size: 36px;
+  text-align: center;
+  color: #333;
+  margin: 20px 0;
+}
   
-  p {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #666;
-    margin: 20px 0;
-    text-align: center;
-  }
-  
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #666;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#side-nav div {
+  background-color: #006699;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  width: 50px;
+}
+
+#side-nav div:hover {
+  background-color: #FF0000;
+}
+
+#side-nav div:target {
+  background-color: #FFFF00;
+}
