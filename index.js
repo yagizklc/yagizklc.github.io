@@ -8,8 +8,8 @@ const heading4 = document.getElementById('heading-4');
 const circles = document.querySelectorAll('#side-nav div');
 
 // Add event listeners to the circles
-circles.forEach(function(circle) {
-  circle.addEventListener('click', function() {
+circles.forEach( (circle) => {
+  circle.addEventListener('click', () => {
     // Get the target heading using the data-target attribute
     const targetId = circle.getAttribute('data-target');
     const targetHeading = document.querySelector(targetId);
