@@ -1,0 +1,30 @@
+---
+import "../styles/global.scss";
+import Layout from "../layouts/Layout.astro";
+import Card from "../components/Card.astro";
+
+const images = [];
+for (let i = 1; i <= 8; i++) {
+  images.push(`/${i}.jpeg`);
+}
+---
+
+<Layout title="Welcome to Astro.">
+  <main>
+    <h1><span class="text-gradient">Basaran Pansiyon</span></h1>
+    <ul class="instructions">
+      <li>
+        <strong> 📌 Location: Amasra 'add map..'</strong>
+      </li>
+      <li>
+        <strong> 📞 Contact: 'no..'</strong>
+      </li>
+    </ul>
+
+    <ul role="list" class="link-card-grid">
+      {images.map((imageUrl) => <Card href={imageUrl} title="Astro" />)}
+    </ul>
+  </main>
+</Layout>
+
+<style is:global></style>
