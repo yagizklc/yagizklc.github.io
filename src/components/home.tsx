@@ -4,7 +4,7 @@ import BlogPage from './blog'
 
 interface TerminalLine {
   id: number
-  type: 'command' | 'output' | 'error'
+  type: 'command' | 'output' | 'error' | 'accent' | 'help'
   content: string
   timestamp?: Date
 }
@@ -17,6 +17,27 @@ export default function HomePage() {
   const [historyIndex, setHistoryIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
+
+  // Valid commands for syntax highlighting
+  const validCommands = ['help', 'whoami', 'contact', 'projects', 'blog', 'home', 'clear', 'ls', 'pwd']
+
+  // Check if current input is a valid command
+  const isValidCommand = (input: string) => {
+    return validCommands.includes(input.toLowerCase().trim())
+  }
+
+  // Get matching commands for auto-completion
+  const getMatchingCommands = (input: string) => {
+    if (!input) return []
+    return validCommands.filter(cmd =>
+      cmd.toLowerCase().startsWith(input.toLowerCase().trim())
+    )
+  }
+
+  // Check if input has partial matches
+  const hasPartialMatch = (input: string) => {
+    return getMatchingCommands(input).length > 0
+  }
 
   // Auto-focus the input and ensure it stays focused
   useEffect(() => {
@@ -46,11 +67,15 @@ export default function HomePage() {
   // Initialize with welcome message
   useEffect(() => {
     const welcomeLines: TerminalLine[] = [
-      { id: 1, type: 'output', content: '┌─ Welcome to Yagiz\'s Terminal ─┐' },
-      { id: 2, type: 'output', content: '│ Type \'help\' to see commands    │' },
-      { id: 3, type: 'output', content: '└────────────────────────────────┘' },
-      { id: 4, type: 'command', content: 'whoami' },
-      { id: 5, type: 'output', content: 'Yagiz Kilicarslan - Software Engineer & Backend Lead at ArealAI' },
+      { id: 1, type: 'output', content: 'Welcome to my terminal portfolio. (Version 1.0.0)' },
+      { id: 2, type: 'output', content: '----' },
+      { id: 3, type: 'output', content: '' },
+      { id: 4, type: 'output', content: 'This project\'s source code can be seen in this project\'s ' },
+      { id: 5, type: 'accent', content: 'GitHub repo: https://github.com/yagizklc/yagizklc.github.io' },
+      { id: 6, type: 'output', content: '' },
+      { id: 7, type: 'output', content: '----' },
+      { id: 8, type: 'output', content: '' },
+      { id: 9, type: 'output', content: 'For a list of available commands, type \'help\'.' },
     ]
     setHistory(welcomeLines)
   }, [])
@@ -63,7 +88,7 @@ export default function HomePage() {
     const cmd = command.toLowerCase().trim()
 
     // Add command to history
-    addToHistory({ type: 'command', content: `$ ${command}` })
+    addToHistory({ type: 'command', content: `visitor@yagiz-terminal:~$ ${command}` })
 
     // Add to command history
     setCommandHistory(prev => [...prev, command])
@@ -72,12 +97,12 @@ export default function HomePage() {
     switch (cmd) {
       case 'help':
         addToHistory({ type: 'output', content: 'Available commands:' })
-        addToHistory({ type: 'output', content: '  whoami     - Display personal information' })
-        addToHistory({ type: 'output', content: '  projects   - View my projects' })
-        addToHistory({ type: 'output', content: '  blog       - Read my blog posts' })
-        addToHistory({ type: 'output', content: '  contact    - Get contact information' })
-        addToHistory({ type: 'output', content: '  clear      - Clear terminal' })
-        addToHistory({ type: 'output', content: '  home       - Return to home page' })
+        addToHistory({ type: 'help', content: '  whoami     - Display personal information' })
+        addToHistory({ type: 'help', content: '  projects   - View my projects' })
+        addToHistory({ type: 'help', content: '  blog       - Read my blog posts' })
+        addToHistory({ type: 'help', content: '  contact    - Get contact information' })
+        addToHistory({ type: 'help', content: '  clear      - Clear terminal' })
+        addToHistory({ type: 'help', content: '  home       - Return to home page' })
         break
 
       case 'whoami':
@@ -87,7 +112,14 @@ export default function HomePage() {
         break
 
       case 'contact':
-        addToHistory({ type: 'output', content: 'Email: yagiz.kilicarslan1@gmail.com' })
+        addToHistory({ type: 'output', content: 'Contact Information:' })
+        addToHistory({ type: 'accent', content: '📧  yagiz.kilicarslan1@gmail.com' })
+        addToHistory({ type: 'output', content: '' })
+        addToHistory({ type: 'output', content: 'Find me online:' })
+        addToHistory({ type: 'accent', content: '🐙  https://github.com/yagizklc' })
+        addToHistory({ type: 'accent', content: '💼  https://linkedin.com/in/yagizkilicarslan' })
+        addToHistory({ type: 'accent', content: '🐦  https://twitter.com/yagizklc' })
+        addToHistory({ type: 'output', content: '' })
         addToHistory({ type: 'output', content: 'Feel free to reach out for collaborations!' })
         break
 
@@ -132,6 +164,15 @@ export default function HomePage() {
     if (e.key === 'Enter') {
       executeCommand(currentInput)
       setCurrentInput('')
+    } else if (e.key === 'Tab') {
+      e.preventDefault()
+      const matches = getMatchingCommands(currentInput)
+      if (matches.length === 1) {
+        setCurrentInput(matches[0])
+      } else if (matches.length > 1) {
+        // Show available completions
+        addToHistory({ type: 'output', content: `Possible completions: ${matches.join(', ')}` })
+      }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       if (commandHistory.length > 0) {
@@ -159,39 +200,85 @@ export default function HomePage() {
       return <ProjectsPage />
     }
     if (currentPage === 'blog') {
-      return <BlogPage />
+      return <BlogPage onNavigateBack={() => setCurrentPage('home')} />
     }
     return null
   }
 
   return (
-    <div className="bg-black text-green-400 font-mono p-8 min-h-screen relative">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-gray-900 text-gray-300 p-8 min-h-screen relative">
+      <div className="max-w-7xl mx-auto">
         {/* Terminal Header */}
-        <div className="bg-gray-800 rounded-t-lg p-3 flex items-center space-x-2">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-          <span className="text-gray-400 text-sm ml-4">terminal — yagiz@personal-page</span>
+        <div className="bg-gray-800 rounded-t-lg p-4 flex items-center space-x-2">
+          <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+          <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+          <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+          <span className="text-gray-400 text-base ml-4">terminal — yagiz@personal-page</span>
         </div>
 
         {/* Terminal Content */}
         <div
           ref={terminalRef}
-          className="bg-black border-2 border-gray-800 rounded-b-lg p-6 max-h-[70vh] overflow-y-auto cursor-text"
+          className="bg-gray-900 border-2 border-gray-700 rounded-b-lg p-10 min-h-[80vh] max-h-[85vh] overflow-y-auto cursor-text terminal-text"
           onClick={() => inputRef.current?.focus()}
         >
           {/* Command History */}
-          <div className="space-y-1 mb-4">
-            {history.map((line) => (
-              <div key={line.id} className={`
-                ${line.type === 'command' ? 'text-green-300 terminal-glow' : ''}
-                ${line.type === 'output' ? 'text-green-400' : ''}
-                ${line.type === 'error' ? 'text-red-400' : ''}
-              `}>
-                {line.content}
-              </div>
-            ))}
+          <div className="space-y-2 mb-6">
+            {history.map((line) => {
+              const renderContent = (content: string, lineType: string) => {
+                // Special handling for help commands
+                if (lineType === 'help') {
+                  const match = content.match(/^(\s*)(\w+)(\s*-\s*.*)$/)
+                  if (match) {
+                    const [, indent, command, description] = match
+                    return (
+                      <>
+                        <span>{indent}</span>
+                        <span className="terminal-green">{command}</span>
+                        <span>{description}</span>
+                      </>
+                    )
+                  }
+                }
+
+                // Check if content contains URLs
+                const urlRegex = /(https?:\/\/[^\s]+)/g
+                const parts = content.split(urlRegex)
+
+                return (
+                  <>
+                    {parts.map((part, index) => {
+                      if (urlRegex.test(part)) {
+                        return (
+                          <a
+                            key={index}
+                            href={part}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="terminal-accent hover:terminal-accent-hover underline transition-colors"
+                          >
+                            {part}
+                          </a>
+                        )
+                      }
+                      return <span key={index}>{part}</span>
+                    })}
+                  </>
+                )
+              }
+
+              return (
+                <div key={line.id} className={`
+                  ${line.type === 'command' ? 'terminal-command terminal-glow' : ''}
+                  ${line.type === 'output' ? 'terminal-output' : ''}
+                  ${line.type === 'error' ? 'terminal-error' : ''}
+                  ${line.type === 'accent' ? 'terminal-accent' : ''}
+                  ${line.type === 'help' ? 'terminal-help' : ''}
+                `}>
+                  {renderContent(line.content, line.type)}
+                </div>
+              )
+            })}
           </div>
 
           {/* Current Page Content */}
@@ -203,7 +290,7 @@ export default function HomePage() {
 
           {/* Current Input Line */}
           <div className="flex items-center">
-            <span className="text-gray-500 mr-2 select-none">$</span>
+            <span className="terminal-prompt mr-3 select-none text-lg">visitor@yagiz-terminal:~$</span>
             <div className="flex-1 relative">
               <input
                 ref={inputRef}
@@ -211,15 +298,28 @@ export default function HomePage() {
                 value={currentInput}
                 onChange={(e) => setCurrentInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-transparent text-green-400 outline-none border-none terminal-glow caret-green-400"
+                className={`w-full bg-transparent outline-none border-none terminal-glow text-lg ${!currentInput
+                  ? 'text-gray-300'
+                  : isValidCommand(currentInput)
+                    ? 'terminal-green'
+                    : hasPartialMatch(currentInput)
+                      ? 'text-yellow-400'
+                      : 'text-gray-300'
+                  }`}
                 autoComplete="off"
                 spellCheck={false}
-                style={{ caretColor: '#4ade80' }}
+                style={{ caretColor: '#ffa500' }}
               />
               {!currentInput && (
-                <span className="absolute left-0 top-0 text-gray-600 pointer-events-none">
+                <span className="absolute left-0 top-0 text-gray-600 pointer-events-none text-lg">
                   Type a command...
                 </span>
+              )}
+              {/* Auto-completion hint */}
+              {currentInput && hasPartialMatch(currentInput) && !isValidCommand(currentInput) && (
+                <div className="absolute left-0 top-8 text-sm text-gray-500">
+                  Press Tab to auto-complete
+                </div>
               )}
             </div>
           </div>

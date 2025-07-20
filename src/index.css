@@ -1,9 +1,76 @@
 @import "tailwindcss";
+@import "highlight.js/styles/atom-one-dark.css";
 
-/* Terminal Theme Global Styles */
+/* Terminal Theme Global Styles - Muted Gray/Orange Scheme */
 @layer base {
     body {
-        @apply bg-black text-green-400 font-mono;
+        @apply bg-gray-900 text-gray-300;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', Monaco, 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+        font-size: 16px;
+    }
+
+    /* Terminal specific text sizing */
+    .terminal-text {
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    /* Blog content specific styling */
+    .blog-content {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .blog-content pre {
+        background-color: #1a1a1a !important;
+        border: 1px solid #374151 !important;
+    }
+
+    .blog-content code {
+        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace !important;
+    }
+
+    /* Override highlight.js theme for terminal consistency */
+    .hljs {
+        background: #1a1a1a !important;
+        color: #d1d5db !important;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-literal,
+    .hljs-title,
+    .hljs-section,
+    .hljs-doctag,
+    .hljs-type,
+    .hljs-name,
+    .hljs-strong {
+        color: #ffa500 !important;
+        /* Terminal accent color */
+    }
+
+    .hljs-string,
+    .hljs-title.class_,
+    .hljs-title.function_,
+    .hljs-symbol,
+    .hljs-bullet,
+    .hljs-link {
+        color: #22c55e !important;
+        /* Terminal green */
+    }
+
+    .hljs-comment,
+    .hljs-quote,
+    .hljs-meta {
+        color: #6b7280 !important;
+        /* Muted gray */
+    }
+
+    .hljs-number,
+    .hljs-regexp,
+    .hljs-literal {
+        color: #60a5fa !important;
+        /* Light blue */
     }
 
     /* Custom scrollbar for terminal theme */
@@ -12,21 +79,21 @@
     }
 
     ::-webkit-scrollbar-track {
-        @apply bg-gray-900;
+        @apply bg-gray-800;
     }
 
     ::-webkit-scrollbar-thumb {
-        @apply bg-gray-700 rounded-md;
+        @apply bg-gray-600 rounded-md;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        @apply bg-gray-600;
+        @apply bg-gray-500;
     }
 
     /* Selection styling */
     ::selection {
-        background-color: rgb(74 222 128 / 0.3);
-        color: rgb(187 247 208);
+        background-color: rgb(251 146 60 / 0.3);
+        color: rgb(254 215 170);
     }
 
     /* Terminal cursor animation */
@@ -49,6 +116,39 @@
 
     /* Terminal glow effect */
     .terminal-glow {
-        text-shadow: 0 0 5px currentColor;
+        text-shadow: 0 0 3px currentColor;
+    }
+
+    /* Custom terminal colors */
+    .terminal-accent {
+        color: #ffa500;
+    }
+
+    .terminal-accent-hover {
+        color: #ffb733;
+    }
+
+    .terminal-prompt {
+        color: #6b7280;
+    }
+
+    .terminal-command {
+        color: #d1d5db;
+    }
+
+    .terminal-output {
+        color: #9ca3af;
+    }
+
+    .terminal-error {
+        color: #f87171;
+    }
+
+    .terminal-green {
+        color: #22c55e;
+    }
+
+    .terminal-help {
+        color: #9ca3af;
     }
 }
