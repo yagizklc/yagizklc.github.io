@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* Terminal Theme Global Styles */
+@layer base {
+    body {
+        @apply bg-black text-green-400 font-mono;
+    }
+
+    /* Custom scrollbar for terminal theme */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-gray-900;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-gray-700 rounded-md;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-600;
+    }
+
+    /* Selection styling */
+    ::selection {
+        background-color: rgb(74 222 128 / 0.3);
+        color: rgb(187 247 208);
+    }
+
+    /* Terminal cursor animation */
+    @keyframes blink {
+
+        0%,
+        50% {
+            opacity: 1;
+        }
+
+        51%,
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .terminal-cursor {
+        animation: blink 1s infinite;
+    }
+
+    /* Terminal glow effect */
+    .terminal-glow {
+        text-shadow: 0 0 5px currentColor;
+    }
+}
